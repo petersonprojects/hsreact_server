@@ -2,14 +2,13 @@
 const express = require('express');
 const app = express();
 
-// axios for api and .env for secrets
+// axios for api, .env for credentials, and oauth client
 const axios = require('axios');
+const OauthClient = require("./oauth/client.js");
 require('dotenv').config();
 
 // port
 const PORT = 3000;
-
-const OauthClient = require("./oauth/client.js");
 
 const oauthOptions = {
     client: {
@@ -24,36 +23,15 @@ const oauthOptions = {
 // imported from ./oauth/client.js
 const oauthClient = new OauthClient({ oauthOptions });
 
-app.get("/",  async (req, res) => {
+app.get("/api",  async (req, res) => {
 
     let token =  await oauthClient.getToken();
 
-    await axios.get(`https://us.api.blizzard.com/hearthstone/cards?locale=en_US&page=${1}&access_token=${token}`)
-    .then((response) => {
-        console.log(response)
-    })
-    .catch(()=> {
-        console.log('im in the catch')
-    })
+    let jsonObj = {aToken: token}
 
-    res.send("OK");
+    res.send(JSON.stringify(jsonObj));
 
 });
-
-// example of how to implement
-// app.get("/signature", async (req, res, next) => {
-//   try {
-//     const { characterName, realmName, region } = req.query;
-//     const character = await characterService.getCharacter(region, realmName, characterName);
-//     const characterMedia = await characterService.getCharacterMedia(character);
-//     const { filename, data } = await signatureService.generateImage(character, characterMedia);
-//     res.set("Content-Type", "image/png");
-//     res.set("Content-Disposition", `inline; filename="${filename}"`);
-//     res.send(data);
-//   } catch (err) {
-//     next(err);
-//   }
-// });
 
 app.use((err, req, res, next) => {
   console.log(err);
