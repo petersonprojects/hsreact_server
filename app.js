@@ -3,7 +3,6 @@ const express = require('express');
 const app = express();
 
 // axios for api, .env for credentials, and oauth client
-const axios = require('axios');
 const OauthClient = require("./oauth/client.js");
 require('dotenv').config();
 
@@ -23,6 +22,21 @@ const oauthOptions = {
 // imported from ./oauth/client.js
 const oauthClient = new OauthClient({ oauthOptions });
 
+// allow CORS
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", 
+    "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
+
+// error handling
+app.use((err, req, res, next) => {
+    console.log(err);
+    res.status(500).send("Internal Service Error");
+});
+
 app.get("/api",  async (req, res) => {
 
     let token =  await oauthClient.getToken();
@@ -31,11 +45,6 @@ app.get("/api",  async (req, res) => {
 
     res.send(JSON.stringify(jsonObj));
 
-});
-
-app.use((err, req, res, next) => {
-  console.log(err);
-  res.status(500).send("Internal Service Error");
 });
 
 app.listen(PORT, () => {
