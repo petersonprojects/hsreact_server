@@ -7,7 +7,7 @@ const axios = require('axios');
 require('dotenv').config();
 
 // port
-const PORT = 3001;
+const PORT = 3000;
 
 const OauthClient = require("./oauth/client.js");
 
