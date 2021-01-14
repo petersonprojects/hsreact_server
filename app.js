@@ -2,12 +2,12 @@
 const express = require('express');
 const app = express();
 
-// axios for api, .env for credentials, and oauth client
+//.env for credentials, and oauth client
 const OauthClient = require("./oauth/client.js");
 require('dotenv').config();
 
 // port
-const PORT = 3000;
+const PORT = process.env.PORT;
 
 const oauthOptions = {
     client: {
@@ -15,7 +15,7 @@ const oauthOptions = {
         secret: process.env.BNET_SECRET
     },
     auth: {
-        tokenHost: process.env.OAUTH_TOKEN_HOST || "https://us.battle.net"
+        tokenHost: process.env.OAUTH_TOKEN_HOST
     }
 };
 
